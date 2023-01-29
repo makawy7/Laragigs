@@ -39,18 +39,20 @@
                 </div>
             </x-card>
             @auth
-                <x-card class="mt-4 p-2 flex space-x-6">
-                    <a href="{{ route('editListing', $listing->id) }}">
-                        <li class="fa-solid fa-pencil"></li> Edit
-                    </a>
-                    <form method="POST" action="{{ route('destroyListing', $listing->id) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button class="text-red-500">
-                            <li class="fa-solid fa-trash"></li> Delete
-                        </button>
-                    </form>
-                </x-card>
+                @if ($listing->user_id === auth()->user()->id)
+                    <x-card class="mt-4 p-2 flex space-x-6">
+                        <a href="{{ route('editListing', $listing->id) }}">
+                            <li class="fa-solid fa-pencil"></li> Edit
+                        </a>
+                        <form method="POST" action="{{ route('destroyListing', $listing->id) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button class="text-red-500">
+                                <li class="fa-solid fa-trash"></li> Delete
+                            </button>
+                        </form>
+                    </x-card>
+                @endif
             @endauth
         </div>
     @endif
