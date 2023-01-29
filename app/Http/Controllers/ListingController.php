@@ -33,11 +33,12 @@ class ListingController extends Controller
             'tags' => 'required',
             'description' => 'required|min:25',
         ]);
+        $formFields['user_id'] = auth()->user()->id;
         if ($request->hasFile('logo')) {
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
         }
         Listing::create($formFields);
-        return redirect()->route('home')->with('success', 'Listing created sucessfully!');
+        return redirect()->route('home')->with('message', 'Listing created sucessfully!');
     }
     public function edit(Listing $listing)
     {
@@ -58,17 +59,16 @@ class ListingController extends Controller
 
         if ($request->hasFile('logo')) {
             $formFields['logo'] = $request->file('logo')->store('logos', 'public');
-        }
-
-        if ($listing->logo ?? false) {
-            if (Storage::fileExists($listing->logo)) {
-                Storage::delete($listing->logo);
+            if ($listing->logo ?? false) {
+                if (Storage::fileExists($listing->logo)) {
+                    Storage::delete($listing->logo);
+                }
             }
         }
 
         $listing->update($formFields);
-        session()->flash('success', 'Listing has been updated successfully!');
-        return redirect()->route('showListing', $listing->id);
+        session()->flash('message', 'Listing has been updated successfully!');
+        return redirect()->route('home');
     }
     public function destroy(Listing $listing)
     {
@@ -78,6 +78,10 @@ class ListingController extends Controller
             }
         }
         $listing->delete();
-        return redirect()->route('home')->with('success', 'Listing has been deleted successfully!');
+        return redirect()->route('home')->with('message', 'Listing has been deleted successfully!');
+    }
+    public function manage()
+    {
+        return view('user.manage', ['listings' => auth()->user()->listings]);
     }
 }

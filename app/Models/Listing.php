@@ -9,6 +9,7 @@ class Listing extends Model
 {
     use HasFactory;
     protected $fillable = [
+        'user_id',
         'title',
         'tags',
         'company',
@@ -18,7 +19,7 @@ class Listing extends Model
         'website',
         'description'
     ];
-    
+
     public function scopeFilter($query, array $filters)
     {
 
@@ -30,5 +31,10 @@ class Listing extends Model
                 ->orWhere('title', 'like', '%' . $filters['search'] . '%')
                 ->orWhere('description', 'like', '%' . $filters['search'] . '%');
         }
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }
